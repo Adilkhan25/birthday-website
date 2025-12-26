@@ -3,7 +3,7 @@
    Interactive Features & Animations
    ============================================ */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // ============================================
     // DOM ELEMENTS
     // ============================================
@@ -12,12 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
         page1: document.getElementById('page1'),
         nameInput: document.getElementById('nameInput'),
         startBtn: document.getElementById('startBtn'),
-        
+
         // Page 2
         page2: document.getElementById('page2'),
         nameDisplay: document.getElementById('nameDisplay'),
         surpriseBtn: document.getElementById('surpriseBtn'),
-        
+
         // Surprise Section
         surpriseSection: document.getElementById('surpriseSection'),
         surpriseOverlay: document.getElementById('surpriseOverlay'),
@@ -26,17 +26,17 @@ document.addEventListener('DOMContentLoaded', function() {
         giftBox: document.getElementById('giftBox'),
         surpriseMessage: document.getElementById('surpriseMessage'),
         heartsRain: document.getElementById('heartsRain'),
-        
+
         // Wish Navigation
         prevWish: document.getElementById('prevWish'),
         nextWish: document.getElementById('nextWish'),
         wishDots: document.getElementById('wishDots'),
-        
+
         // Music
         bgMusic: document.getElementById('bgMusic'),
         musicBtn: document.getElementById('musicBtn'),
         musicControls: document.getElementById('musicControls'),
-        
+
         // Effects
         floatingElements: document.getElementById('floatingElements'),
         confettiContainer: document.getElementById('confettiContainer')
@@ -52,10 +52,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // NAME INPUT HANDLING
     // ============================================
-    elements.nameInput.addEventListener('input', function() {
+    elements.nameInput.addEventListener('input', function () {
         const value = this.value.trim();
         elements.startBtn.disabled = value.length === 0;
-        
+
         // Add subtle animation on typing
         if (value.length > 0) {
             this.style.borderColor = 'var(--gold-main)';
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    elements.nameInput.addEventListener('keypress', function(e) {
+    elements.nameInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter' && this.value.trim().length > 0) {
             elements.startBtn.click();
         }
@@ -73,26 +73,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // START BUTTON - TRANSITION TO PAGE 2
     // ============================================
-    elements.startBtn.addEventListener('click', function() {
+    elements.startBtn.addEventListener('click', function () {
         if (this.disabled) return;
-        
+
         userName = elements.nameInput.value.trim();
-        
+
         // Trigger confetti
         createConfetti();
-        
+
         // Transition after confetti starts
         setTimeout(() => {
             // Update all name placeholders
             updateNamePlaceholders(userName);
-            
+
             // Switch pages
             elements.page1.classList.remove('active');
             elements.page2.classList.add('active');
-            
+            elements.bgMusic.play().then(() => {
+                elements.musicBtn.classList.add('playing');
+                elements.musicBtn.querySelector('.music-status').textContent = 'Pause';
+                isPlaying = true;
+            }).catch(err => console.log('Autoplay blocked:', err));
+
             // Start floating effects
             startFloatingEffects();
-            
+
             // Show music controls
             elements.musicControls.style.opacity = '1';
         }, 800);
@@ -104,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateNamePlaceholders(name) {
         // Main display
         elements.nameDisplay.textContent = name;
-        
+
         // All other placeholders
         const placeholders = document.querySelectorAll('.name-placeholder');
         placeholders.forEach(el => {
@@ -117,16 +122,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     function createConfetti() {
         const colors = [
-            '#ec407a', '#f48fb1', '#ffc107', '#ffecb3', 
+            '#ec407a', '#f48fb1', '#ffc107', '#ffecb3',
             '#ff8a80', '#ffd54f', '#f8bbd9', '#fff59d'
         ];
         const shapes = ['square', 'circle', 'rectangle'];
-        
+
         for (let i = 0; i < 150; i++) {
             setTimeout(() => {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
-                
+
                 // Random properties
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 const shape = shapes[Math.floor(Math.random() * shapes.length)];
@@ -134,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const size = Math.random() * 10 + 5;
                 const duration = Math.random() * 2 + 2;
                 const delay = Math.random() * 0.5;
-                
+
                 confetti.style.cssText = `
                     left: ${left}%;
                     width: ${size}px;
@@ -144,9 +149,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     animation-duration: ${duration}s;
                     animation-delay: ${delay}s;
                 `;
-                
+
                 elements.confettiContainer.appendChild(confetti);
-                
+
                 // Remove after animation
                 setTimeout(() => {
                     confetti.remove();
@@ -161,67 +166,67 @@ document.addEventListener('DOMContentLoaded', function() {
     function startFloatingEffects() {
         // Create balloons
         const balloons = ['🎈', '🎀', '🩷', '💛', '🌸'];
-        
+
         function createBalloon() {
             const balloon = document.createElement('div');
             balloon.className = 'balloon';
             balloon.textContent = balloons[Math.floor(Math.random() * balloons.length)];
-            
+
             const left = Math.random() * 100;
             const duration = Math.random() * 8 + 8;
             const delay = Math.random() * 2;
             const size = Math.random() * 1.5 + 1.5;
-            
+
             balloon.style.cssText = `
                 left: ${left}%;
                 animation-duration: ${duration}s;
                 animation-delay: ${delay}s;
                 font-size: ${size}rem;
             `;
-            
+
             elements.floatingElements.appendChild(balloon);
-            
+
             setTimeout(() => {
                 balloon.remove();
             }, (duration + delay) * 1000);
         }
-        
+
         // Initial balloons
         for (let i = 0; i < 5; i++) {
             setTimeout(createBalloon, i * 500);
         }
-        
+
         // Continue creating balloons
         balloonsInterval = setInterval(createBalloon, 3000);
-        
+
         // Create sparkles
         function createSparkle() {
             const sparkle = document.createElement('div');
             sparkle.className = 'sparkle-float';
             sparkle.textContent = '✨';
-            
+
             const left = Math.random() * 100;
             const top = Math.random() * 100;
             const duration = Math.random() * 2 + 3;
-            
+
             sparkle.style.cssText = `
                 left: ${left}%;
                 top: ${top}%;
                 animation-duration: ${duration}s;
             `;
-            
+
             elements.floatingElements.appendChild(sparkle);
-            
+
             setTimeout(() => {
                 sparkle.remove();
             }, duration * 2000);
         }
-        
+
         // Initial sparkles
         for (let i = 0; i < 8; i++) {
             setTimeout(createSparkle, i * 300);
         }
-        
+
         // Continue creating sparkles
         sparklesInterval = setInterval(createSparkle, 2000);
     }
@@ -229,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // SURPRISE SECTION
     // ============================================
-    elements.surpriseBtn.addEventListener('click', function() {
+    elements.surpriseBtn.addEventListener('click', function () {
         elements.surpriseSection.classList.add('active');
         document.body.style.overflow = 'hidden';
     });
@@ -238,18 +243,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeSurpriseSection() {
         elements.surpriseSection.classList.remove('active');
         document.body.style.overflow = '';
-        
+
         // Reset gift box state for next time - immediate reset after fade out
         setTimeout(() => {
             elements.giftBoxContainer.classList.remove('opened');
             elements.giftBoxContainer.style.display = 'block';
             elements.surpriseMessage.classList.remove('active');
-            
+
             // Reset gift box animation
             elements.giftBox.style.animation = '';
             elements.giftBox.style.transform = '';
             elements.giftBox.style.opacity = '';
-            
+
             // Clear any remaining hearts
             elements.heartsRain.innerHTML = '';
         }, 500);
@@ -259,18 +264,18 @@ document.addEventListener('DOMContentLoaded', function() {
     elements.surpriseOverlay.addEventListener('click', closeSurpriseSection);
 
     // Gift box click
-    elements.giftBox.addEventListener('click', function() {
+    elements.giftBox.addEventListener('click', function () {
         // Prevent multiple clicks
         if (elements.giftBoxContainer.classList.contains('opened')) return;
-        
+
         // Animate gift opening
         this.style.animation = 'giftOpen 0.5s ease-out forwards';
-        
+
         setTimeout(() => {
             elements.giftBoxContainer.style.display = 'none';
             elements.giftBoxContainer.classList.add('opened');
             elements.surpriseMessage.classList.add('active');
-            
+
             // Start hearts rain
             createHeartsRain();
         }, 500);
@@ -281,25 +286,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     function createHeartsRain() {
         const hearts = ['💕', '💗', '💖', '💝', '❤️', '🩷'];
-        
+
         for (let i = 0; i < 30; i++) {
             setTimeout(() => {
                 const heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                
+
                 const left = Math.random() * 100;
                 const duration = Math.random() * 3 + 2;
                 const size = Math.random() * 1 + 0.8;
-                
+
                 heart.style.cssText = `
                     left: ${left}%;
                     animation-duration: ${duration}s;
                     font-size: ${size}rem;
                 `;
-                
+
                 elements.heartsRain.appendChild(heart);
-                
+
                 setTimeout(() => {
                     heart.remove();
                 }, duration * 1000);
@@ -317,14 +322,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Boundary check
         if (index < 0) index = wishCards.length - 1;
         if (index >= wishCards.length) index = 0;
-        
+
         currentWish = index;
-        
+
         // Update cards
         wishCards.forEach((card, i) => {
             card.classList.toggle('active', i === index);
         });
-        
+
         // Update dots
         dots.forEach((dot, i) => {
             dot.classList.toggle('active', i === index);
@@ -349,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // MUSIC CONTROLS
     // ============================================
-    elements.musicBtn.addEventListener('click', function() {
+    elements.musicBtn.addEventListener('click', function () {
         if (isPlaying) {
             elements.bgMusic.pause();
             this.classList.remove('playing');
@@ -372,18 +377,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // KEYBOARD NAVIGATION
     // ============================================
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         // Escape to close surprise
         if (e.key === 'Escape' && elements.surpriseSection.classList.contains('active')) {
             closeSurpriseSection();
         }
-        
+
         // Arrow keys for wish navigation
         if (elements.surpriseMessage.classList.contains('active')) {
             if (e.key === 'ArrowLeft') showWish(currentWish - 1);
             if (e.key === 'ArrowRight') showWish(currentWish + 1);
         }
-        
+
         // Space to toggle music (when not in input)
         if (e.key === ' ' && document.activeElement !== elements.nameInput) {
             e.preventDefault();
@@ -409,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSwipe() {
         const diff = touchStartX - touchEndX;
         const threshold = 50;
-        
+
         if (Math.abs(diff) > threshold) {
             if (diff > 0) {
                 showWish(currentWish + 1);
@@ -439,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // INITIAL SETUP
     // ============================================
-    
+
     // Focus name input on load
     setTimeout(() => {
         elements.nameInput.focus();
